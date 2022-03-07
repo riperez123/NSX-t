@@ -38,7 +38,7 @@ data "nsxt_policy_service" "icmp" {
 }
 
 resource "nsxt_policy_segment" "segment1" {
-  display_name        = "Terraform_segment_1(do not use for TF testing only)"
+  display_name        = "Ricky_Terraform_segment_1(do not use for TF testing only)"
   description         = "Terraform provisioned Segment by Ricky"
   connectivity_path   = data.nsxt_policy_tier1_gateway.tier1_router.path
   transport_zone_path = data.nsxt_policy_transport_zone.overlay_tz.path
