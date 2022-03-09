@@ -47,6 +47,11 @@ resource "nsxt_policy_segment" "segment1" {
     cidr = "10.10.10.1/24"
     # dhcp_ranges = ["10.10.10.100-10.10.10.160"]
   }
+
+  tag {
+    scope = "testing"
+    tag   = "Ricky"
+  }
 }
 
 resource "nsxt_policy_group" "group1" {
@@ -59,6 +64,20 @@ resource "nsxt_policy_group" "group1" {
       member_type = "VirtualMachine"
       operator    = "CONTAINS"
       value       = "Ricky"
+    }
+  }
+}
+
+resource "nsxt_policy_group" "group2" {
+  display_name = "RickysSegments"
+  description  = "TF provisioned group"
+
+  criteria {
+    condition {
+      key         = "Tag"
+      member_type = "Segment"
+      operator    = "EQUALS"
+      value       = "testing|Ricky"
     }
   }
 }
@@ -108,20 +127,29 @@ resource "nsxt_policy_tier1_gateway" "tier1_gw" {
   }
 }
 
-# data "nsxt_policy_tier1_gateway" "tier1_router_a" {
-#   display_name = "Ricky-Tier1-gw1"
-# }
+data "nsxt_policy_tier1_gateway" "tier1_gw" {
+  display_name = "Ricky-Tier1-gw1"
+  depends_on = [
+    nsxt_policy_tier1_gateway.tier1_gw
+  ]
+}
 
-# resource "nsxt_policy_segment" "segment2" {
-#   display_name        = "Terraform_segment_1(do not use for TF testing only)"
-#   description         = "Terraform provisioned Segment by Ricky"
-#   connectivity_path   = data.nsxt_policy_tier1_gateway.tier1_router_a.path
-#   transport_zone_path = data.nsxt_policy_transport_zone.overlay_tz.path
+resource "nsxt_policy_segment" "segment2" {
+  display_name = "Ricky_Terraform_segment_2(do not use for TF testing only)"
+  description  = "Terraform provisioned Segment by Ricky"
 
-#   subnet {
-#     cidr = "10.10.20.1/24"
-#     # dhcp_ranges = ["10.10.20.100-10.10.20.160"]
-#   }
-# }
+  connectivity_path   = data.nsxt_policy_tier1_gateway.tier1_gw.path
+  transport_zone_path = data.nsxt_policy_transport_zone.overlay_tz.path
+
+  subnet {
+    cidr = "10.10.20.1/24"
+    # dhcp_ranges = ["10.10.20.100-10.10.20.160"]
+  }
+
+  tag {
+    scope = "testing"
+    tag   = "Ricky"
+  }
+}
 
 
